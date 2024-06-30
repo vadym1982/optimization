@@ -27,7 +27,7 @@ contains
         !--------------------------------------------------------------------------------------------------------------
         type(pso_solver) :: self
         integer, intent(in), optional   :: p_count  !! Number of particles
-        real(wp), intent(in), optional  :: weight   !! Old speed weight factor
+        real(wp), intent(in), optional  :: weight   !! Momentum factor
         real(wp), intent(in), optional  :: c1       !! Local trend factor
         real(wp), intent(in), optional  :: c2       !! Global trend factor
         !--------------------------------------------------------------------------------------------------------------
@@ -68,8 +68,9 @@ contains
         call rand_mat(-delta, delta, v)
         valid_solution = .false.
         y_min = huge(y_min)
-
         i_min = 0
+
+        ! Initial population
         do i = 1, m
             mask_p(i) = all(constr(x(i, :)) <= 0.0_wp)
 
@@ -87,15 +88,19 @@ contains
 
         if (valid_solution) g(:) = x(i_min, :)
 
+        ! PSO iterations
         do i = 1, iterations
+            ! Momentum speed
             v = self%weight * v
 
             do j = 1, m
+                ! Local trend
                 if (mask_p(j)) then
                     call random_number(r)
                     v(j, :) = v(j, :) + self%c1 * r * (p(j, :) - x(j, :))
                 end if
 
+                ! Global trend
                 if (valid_solution) then
                     call random_number(r)
                     v(j, :) = v(j, :) + self%c2 * r * (g - x(j, :))
@@ -105,13 +110,13 @@ contains
             x = x + v
             i_min = 0
 
+            ! Update trends
             do j = 1, m
                 valid = all(constr(x(j, :)) <= 0.0_wp)
 
                 if (valid) then
                     valid_solution = .true.
                     y = f(x(j, :))
-!                    print *, x(j, :), y
 
                     if ((y < yp(j)) .or. (.not. mask_p(j))) then
                         yp(j) = y
