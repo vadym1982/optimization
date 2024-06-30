@@ -72,7 +72,6 @@ contains
         i_min = 0
         do i = 1, m
             mask_p(i) = all(constr(x(i, :)) <= 0.0_wp)
-            print *, i, x(i, :), mask_p(i)
 
             if (mask_p(i)) then
                 valid_solution = .true.
@@ -87,8 +86,6 @@ contains
         end do
 
         if (valid_solution) g(:) = x(i_min, :)
-
-        print *, "min", g, y_min
 
         do i = 1, iterations
             v = self%weight * v
@@ -130,9 +127,6 @@ contains
             end do
 
             if (i_min > 0) g(:) = x(i_min, :)
-            if (mod(i, 10) == 0) then
-                print *, "min", i, g, y_min
-            end if
         end do
 
         if (valid_solution) then
