@@ -38,4 +38,7 @@ contains
         self%dw = 0.8_wp; if(present(dw)) self%dw = dw
     end function de_solver_init
 
+
+    subroutine optimize_pso(self, f, constr, lower, upper, iterations, solution)
+
 end module differential_evolution

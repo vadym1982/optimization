@@ -14,7 +14,7 @@ program test
 
     call cpu_time(t1)
     solver1 = pso_solver(p_count=80, weight=0.9_wp, c1=0.4_wp, c2=0.6_wp)
-    call solver1%optimize(schaffer_function_n2, no_constraints, [(-50.0_wp, i=1,2)], [(100.0_wp, i=1,2)], 1000, &
+    call solver1%optimize(holder_table_fun, holder_table_constr, [(0.0_wp, i=1,2)], [(100.0_wp, i=1,2)], 1000, &
             solution1)
     call cpu_time(t2)
 

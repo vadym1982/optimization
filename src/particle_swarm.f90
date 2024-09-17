@@ -77,7 +77,7 @@ contains
 
         ! Initial population
         do i = 1, m
-            mask_p(i) = all(constr(x(i, :)) <= 0.0_wp)
+            mask_p(i) = all(constr(x(i, :)) <= 0.0_wp) .and. all(x(i, :) >= lower) .and. all(x(i, :) <= upper)
 
             if (mask_p(i)) then
                 valid_solution = .true.
@@ -117,7 +117,7 @@ contains
 
             ! Update trends
             do j = 1, m
-                valid = all(constr(x(j, :)) <= 0.0_wp)
+                valid = all(constr(x(j, :)) <= 0.0_wp) .and. all(x(i, :) >= lower) .and. all(x(i, :) <= upper)
 
                 if (valid) then
                     valid_solution = .true.
