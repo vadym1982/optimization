@@ -1,9 +1,13 @@
 module particle_swarm
+    !------------------------------------------------------------------------------------------------------------------
+    !! Implementation of the Particle Swarm Optimization algorithm
+    !------------------------------------------------------------------------------------------------------------------
     use env, only: wp
     use interfaces, only: multivariate_fun, constraints, optimization_result
     use utils, only: rand_mat
 
     implicit none
+
 
     type pso_solver
         !! PSO solver class
@@ -15,9 +19,10 @@ module particle_swarm
         procedure :: optimize => optimize_pso
     end type pso_solver
 
-    interface PSO
+
+    interface pso_solver
         procedure :: pso_solver_init
-    end interface PSO
+    end interface pso_solver
 
 contains
 
@@ -43,18 +48,18 @@ contains
         !! Solve optimization problem with PSO solver
         !--------------------------------------------------------------------------------------------------------------
         class(pso_solver)                       :: self
-        procedure(multivariate_fun)             :: f
-        procedure(constraints)                  :: constr
-        integer, intent(in)                     :: iterations
-        real(wp), intent(in)                    :: lower(:)
-        real(wp), intent(in)                    :: upper(:)
-        type(optimization_result), intent(out)  :: solution
+        procedure(multivariate_fun)             :: f            !! Objective function with `multivariate_fun` interface
+        procedure(constraints)                  :: constr       !! Constraints function with `constraints` interface
+        integer, intent(in)                     :: iterations   !! Number of iterations
+        real(wp), intent(in)                    :: lower(:)     !! Vector of lower bounds for variable vector
+        real(wp), intent(in)                    :: upper(:)     !! Vector of upper bounds for variable vector
+        type(optimization_result), intent(out)  :: solution     !! Solution result
         !--------------------------------------------------------------------------------------------------------------
         integer :: m, n, i, i_min, j
         real(wp), allocatable :: x(:, :), v(:, :), p(:, :), g(:)
         real(wp), allocatable :: yp(:), delta(:), r(:)
         real(wp) :: y, y_min
-        logical, allocatable :: mask_p(:), mask(:)
+        logical, allocatable :: mask_p(:)
         logical :: valid_solution, valid
 
         m = self%p_count
@@ -134,6 +139,7 @@ contains
             if (i_min > 0) g(:) = x(i_min, :)
         end do
 
+        ! Optimization result
         if (valid_solution) then
             solution%x = g
             solution%fun = f(solution%x)

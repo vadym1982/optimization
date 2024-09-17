@@ -1,5 +1,6 @@
 module interfaces
     use env, only: wp
+
     implicit none
 
     interface
@@ -12,7 +13,7 @@ module interfaces
 
         function constraints(x) result(c)
             !! Interface for the constrains functions. Result is vector of the values of the left hand sides for each
-            !! constraint functions
+            !! constraint g_i(x) <= 0
             import wp
             real(wp)                :: x(:)
             real(wp), allocatable   :: c(:)
@@ -31,12 +32,14 @@ module interfaces
 contains
 
     function no_constraints(x) result(c)
+        !--------------------------------------------------------------------------------------------------------------
         !! Function with `constraints` interface for empty constraints
+        !--------------------------------------------------------------------------------------------------------------
         real(wp)                :: x(:)
         real(wp), allocatable   :: c(:)
-
+        !--------------------------------------------------------------------------------------------------------------
         allocate(c(1))
-        c = 0.0
+        c = 0.0_wp
     end function no_constraints
 
 end module interfaces

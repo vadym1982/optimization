@@ -1,12 +1,12 @@
 module utils
     use env, only: wp
-    use interfaces, only: multivariate_fun
+    use interfaces, only: multivariate_fun, constraints
 
 contains
 
     subroutine rand_mat(lower, upper, mat)
         !--------------------------------------------------------------------------------------------------------------
-        !! Generate random matrix of values with lower and upper bounds lower(j) <= mat(i, j) <= upper(j)
+        !! Generate random matrix of values with lower and upper bounds lower(j) <= mat(i, j) <= upper(j).
         !--------------------------------------------------------------------------------------------------------------
         real(kind=8), intent(in)    :: lower(:), upper(:)   !! Arrays of lower and upper bounds for matrix elements
         real(kind=8), intent(out)   :: mat(:, :)            !! Random matrix
@@ -18,23 +18,17 @@ contains
     end subroutine rand_mat
 
 
-!    subroutine calc_fun(f, c, x, y, mask)
-!        !--------------------------------------------------------------------------------------------------------------
-!        !! Calculate multivariate function with `fun` interface for each row in matrix `x`
-!        !--------------------------------------------------------------------------------------------------------------
-!        procedure(multivariate_fun) :: f        !! Multivariate function with `multivariate_fun` interface
-!        procedure(constraints)      :: c        !! Constraints function with `constraints` interface
-!        real(kind=8)                :: x(:, :)  !! Matrix of arguments. Each row represents a vector of function
-!                                                !! arguments values
-!        real(kind=8)                :: y(:)     !! Array of function values y(i) = f(x(i, :))
-!        logical                     :: mask(:)  !! An array of results for satisfying constraints for each row of `x`
-!        !--------------------------------------------------------------------------------------------------------------
-!        integer :: i
-!
-!        do i = 1, size(x, 1)
-!            y(i) = f(x(i, :))
-!            mask(i) = all(c(x(i, :)))
-!        end do
-!    end subroutine calc_fun
+    function penalty_function(fun, constr, x, penalty) result(f)
+        !--------------------------------------------------------------------------------------------------------------
+        !! Calculate objective function with penalty for violating constraints
+        !--------------------------------------------------------------------------------------------------------------
+        procedure(multivariate_fun) :: fun
+        procedure(constraints)      :: constr
+        real(wp)                    :: x(:)
+        real(wp)                    :: penalty
+        !--------------------------------------------------------------------------------------------------------------
+        f = fun(x) + penalty * sum(max(0.0_wp, constr(x)) ** 2)
+    end function penalty_function
+
 
 end module utils
