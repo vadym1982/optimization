@@ -45,7 +45,10 @@ contains
 
     subroutine optimize_pso(self, f, constr, lower, upper, iterations, solution)
         !--------------------------------------------------------------------------------------------------------------
-        !! Solve optimization problem with PSO solver
+        !! Solve optimization problem with PSO solver.
+        !! Minimize f(x), subjected to constraints:
+        !!    constr(x) <= 0
+        !!    lower <= x <= upper
         !--------------------------------------------------------------------------------------------------------------
         class(pso_solver)                       :: self
         procedure(multivariate_fun)             :: f            !! Objective function with `multivariate_fun` interface

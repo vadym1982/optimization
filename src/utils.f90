@@ -4,6 +4,19 @@ module utils
 
 contains
 
+    function randint(m, n) result(r)
+        !--------------------------------------------------------------------------------------------------------------
+        !! Get random integer from `m` to `n` inclusive
+        !--------------------------------------------------------------------------------------------------------------
+        integer :: m, n
+        integer :: r
+        !--------------------------------------------------------------------------------------------------------------
+        real(wp) :: u
+        call random_number(u)
+
+        r = floor(m + (n - m + 1) * u)
+    end function randint
+
     subroutine rand_mat(lower, upper, mat)
         !--------------------------------------------------------------------------------------------------------------
         !! Generate random matrix of values with lower and upper bounds lower(j) <= mat(i, j) <= upper(j).
