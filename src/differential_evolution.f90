@@ -1,6 +1,7 @@
 module differential_evolution
     !------------------------------------------------------------------------------------------------------------------
-    !! Implementation of the Differential Evolution optimization algorithm
+    !! Implementation of the Differential Evolution optimization algorithm for finding global minumum of the
+    !! multivariate function with boud constraints lower <= x <= upper
     !------------------------------------------------------------------------------------------------------------------
     use env, only: wp
     use interfaces, only: multivariate_fun, constraints, optimization_result
@@ -20,7 +21,6 @@ module differential_evolution
     interface de_solver
         procedure :: de_solver_init
     end interface de_solver
-
 
 contains
 
@@ -102,6 +102,8 @@ contains
                 end do
 
                 xp(j, d) = v1(d) + self%dw * (v2(d) - v3(d))
+                where (xp(j, :) < lower) xp(j, :) = lower
+                where (xp(j, :) > upper) xp(j, :) = upper
                 yp(j) = f(xp(j, :))
                 if (yp(j) <= y(j)) mask(j) = .true.
             end do

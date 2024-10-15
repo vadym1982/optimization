@@ -3,6 +3,7 @@ program test
     use interfaces, only: optimization_result, no_constraints
     use particle_swarm, only: pso_solver
     use differential_evolution, only: de_solver
+    use conjugate_gradient, only: cg_solver
     use test_functions, only: rosenbrock, square, constraints_example, simonescu_fun, simonescu_constr, &
             holder_table_fun, holder_table_constr,  schaffer_function_n2
 
@@ -10,14 +11,17 @@ program test
 
     type(pso_solver) :: solver1
     type(de_solver) :: solver2
-    type(optimization_result) :: solution1, solution2
+    type(cg_solver) :: solver3
+
+    type(optimization_result) :: solution1, solution2, solution3
+
     integer :: i
     real(wp) :: t1, t2
 
     call cpu_time(t1)
     solver1 = pso_solver(p_count=80, weight=0.9_wp, c1=0.4_wp, c2=0.6_wp)
 
-    call solver1%optimize(rosenbrock, no_constraints, [(-5.0_wp, i=1,7)], [(5.0_wp, i=1,7)], 1000, &
+    call solver1%optimize(rosenbrock, no_constraints, [(-5.0_wp, i=1,7)], [(5.0_wp, i=1,7)], 10000, &
             solution1)
     call cpu_time(t2)
 
@@ -32,10 +36,20 @@ program test
             solution2)
     call cpu_time(t2)
 
-    PRINT *, "ok"
-
     print *, solution2%x, solution2%fun
     print *, solution2%message
     print "(A,F12.9)", "DE. Optimization time: ", t2 - t1
+
+    call cpu_time(t1)
+    solver3 = cg_solver(attempts=80)
+
+    call solver3%optimize(rosenbrock, [(-5.0_wp, i=1,7)], [(5.0_wp, i=1,7)], 1.0e-5_wp, solution3)
+    call cpu_time(t2)
+
+    print *, solution3%x, solution3%fun
+    print *, solution3%message
+    print "(A,F12.9)", "CG. Optimization time: ", t2 - t1
+
+
 
 end program test

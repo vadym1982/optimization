@@ -44,4 +44,33 @@ contains
     end function penalty_function
 
 
+    subroutine grad(f, x, h, g)
+        !--------------------------------------------------------------------------------------------------------------
+        !! Numerical estimation of the gradient of a multivariate function using finite diference scheme
+        !--------------------------------------------------------------------------------------------------------------
+        procedure(multivariate_fun) :: f     !! Multivariate function with 'fun' interface
+        real(kind=8), intent(in)    :: x(:)  !! Point for calculation of the gradient
+        real(kind=8), intent(in)    :: h     !! Argument increment << 1
+        real(kind=8), intent(out)   :: g(:)  !! Regulting gradient vector
+        !--------------------------------------------------------------------------------------------------------------
+        integer :: i, n
+        real(kind=8), allocatable :: x1(:), x2(:)
+
+        n = size(x)
+        allocate(x1(n), x2(n))
+        x1 = x
+        x2 = x
+
+        do i = 1, n
+            if (i > 1) then
+                x1(i - 1) = x(i - 1)
+                x2(i - 1) = x(i - 1)
+            end if
+            x1(i) = x(i) - h
+            x2(i) = x(i) + h
+            g(i) = (f(x2) - f(x1)) / h / 2.0d0
+        end do
+    end subroutine grad
+
+
 end module utils

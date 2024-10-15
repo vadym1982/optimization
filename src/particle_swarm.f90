@@ -37,7 +37,7 @@ contains
         real(wp), intent(in), optional  :: c2       !! Global trend factor
         !--------------------------------------------------------------------------------------------------------------
         self%p_count = 80; if(present(p_count)) self%p_count = p_count
-        self%weight = 1.0_wp; if(present(weight)) self%weight = weight
+        self%weight = 0.9_wp; if(present(weight)) self%weight = weight
         self%c1 = 0.4_wp; if(present(c1)) self%c1 = c1
         self%c2 = 0.6_wp; if(present(c2)) self%c1 = c2
     end function pso_solver_init
@@ -72,7 +72,7 @@ contains
         allocate(mask_p(m))
 
         call rand_mat(lower, upper, x)
-        delta = (upper - lower) * 0.5_wp
+        delta = (upper - lower) * 0.2_wp
         call rand_mat(-delta, delta, v)
         valid_solution = .false.
         y_min = huge(y_min)
