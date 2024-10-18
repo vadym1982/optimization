@@ -38,8 +38,8 @@ contains
         !--------------------------------------------------------------------------------------------------------------
         self%p_count = 80; if(present(p_count)) self%p_count = p_count
         self%weight = 0.9_wp; if(present(weight)) self%weight = weight
-        self%c1 = 0.4_wp; if(present(c1)) self%c1 = c1
-        self%c2 = 0.6_wp; if(present(c2)) self%c1 = c2
+        self%c1 = 0.5_wp; if(present(c1)) self%c1 = c1
+        self%c2 = 0.3_wp; if(present(c2)) self%c1 = c2
     end function pso_solver_init
 
 
@@ -58,7 +58,7 @@ contains
         real(wp), intent(in)                    :: upper(:)     !! Vector of upper bounds for variable vector
         type(optimization_result), intent(out)  :: solution     !! Solution result
         !--------------------------------------------------------------------------------------------------------------
-        integer :: m, n, i, i_min, j
+        integer :: m, n, i, i_min, j, tmp
         real(wp), allocatable :: x(:, :), v(:, :), p(:, :), g(:)
         real(wp), allocatable :: yp(:), delta(:), r(:)
         real(wp) :: y, y_min
@@ -72,7 +72,7 @@ contains
         allocate(mask_p(m))
 
         call rand_mat(lower, upper, x)
-        delta = (upper - lower) * 0.2_wp
+        delta = (upper - lower) * 0.5_wp
         call rand_mat(-delta, delta, v)
         valid_solution = .false.
         y_min = huge(y_min)
@@ -120,7 +120,7 @@ contains
 
             ! Update trends
             do j = 1, m
-                valid = all(constr(x(j, :)) <= 0.0_wp) .and. all(x(i, :) >= lower) .and. all(x(i, :) <= upper)
+                valid = all(constr(x(j, :)) <= 0.0_wp) .and. all(x(j, :) >= lower) .and. all(x(j, :) <= upper)
 
                 if (valid) then
                     valid_solution = .true.
@@ -138,7 +138,6 @@ contains
                     end if
                 end if
             end do
-
             if (i_min > 0) g(:) = x(i_min, :)
         end do
 

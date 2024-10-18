@@ -39,7 +39,7 @@ contains
         real(wp), allocatable   :: c(:)
         !--------------------------------------------------------------------------------------------------------------
         allocate(c(1))
-        c = 0.0_wp
+        c = -1.0_wp
     end function no_constraints
 
 end module interfaces
