@@ -72,7 +72,7 @@ contains
         allocate(mask_p(m))
 
         call rand_mat(lower, upper, x)
-        delta = (upper - lower) * 0.5_wp
+        delta = (upper - lower)
         call rand_mat(-delta, delta, v)
         valid_solution = .false.
         y_min = huge(y_min)

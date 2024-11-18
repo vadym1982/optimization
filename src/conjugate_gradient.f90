@@ -75,7 +75,7 @@ contains
             call grad(f, x, 1.0d-7, g2)
             g2dot = dot_product(g2, g2)
 
-            if (norm2(g2) == 0d0) then
+            if (norm2(g2) <= epsilon(1.0d0)) then
                 x_opt = x
                 y_opt = f(x)
                 return
@@ -110,16 +110,22 @@ contains
                         end if
                         i = i + 1
                         if (i > max_iter) then
+                            y_opt = y
                             exit outer
                         end if
                     end do
                 else
+                    i = 0
                     do
                         ! Decreasing step
                         a = a * dec_factor
                         y = f(x + a * s2)
                         if (y < y_opt) then
                             y_opt = y
+                            exit outer
+                        end if
+                        i = i + 1
+                        if (i > max_iter * 10) then
                             exit outer
                         end if
                     end do
