@@ -24,7 +24,7 @@ module differential_evolution
 
 contains
 
-    function de_solver_init(population, cp, dw) result(self)
+    function de_solver_init(population, cp, dw, random_state) result(self)
         !--------------------------------------------------------------------------------------------------------------
         !! Constructor for PSO solver
         !--------------------------------------------------------------------------------------------------------------
@@ -32,10 +32,18 @@ contains
         integer, intent(in), optional   :: population   !! Number of particles
         real(wp), intent(in), optional  :: cp           !! Crossover probability
         real(wp), intent(in), optional  :: dw           !! Differential weight
+        integer, intent(in), optional   :: random_state !! Random state for random number generator
         !--------------------------------------------------------------------------------------------------------------
+        integer :: i, n
+
         self%population = 80; if(present(population)) self%population = population
         self%cp = 0.9_wp; if(present(cp)) self%cp = cp
         self%dw = 0.8_wp; if(present(dw)) self%dw = dw
+
+        if (present(random_state)) then
+            call random_seed(size=n)
+            call random_seed(put=[(random_state, i = 1, n)])
+        end if
     end function de_solver_init
 
 
